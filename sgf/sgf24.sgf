@@ -1,0 +1,117 @@
+(;
+GM[1]FF[4]VW[]AP[Many Faces of Go:10.0]
+SZ[19]
+HA[0]
+ST[0]
+PB[Alexandre Dinerchtein]
+PW[Cho Hanseung]
+DT[2003-06-19]
+KM[6.5]
+RE[W+R]
+SO[http://www.go4go.net]
+EV[8th LG Cup]
+BR[1p]
+WR[6p]
+RO[2]
+;B[pd]
+C[This is the game I played at the second round of LG World Championship.
+My opponent is Cho Hanseung, 6-dan
+];W[dp];B[fq];W[cn];B[pq];W[dc];B[ip]
+(;W[qk]
+C[This move is rather unusual -
+];B[qn];W[qh];B[qf];W[kc];B[ce];W[ed]
+C[A solid move. I expected a pincer
+];B[ch];W[pb]
+;B[qc];W[nc]
+(;B[qb]
+C[A slow move -
+];W[df];B[cf];W[dg];B[cg];W[kq]
+(;B[jq]
+C[The only move -
+];W[kp];B[nq];W[jn];B[dq];W[cq];B[cr]
+(;W[cp]
+C[White has no other way -
+];B[er];W[ck];B[bc];W[jf]
+(;B[hn]
+C[Another slow move -
+];W[qq]
+C[A probe
+];B[qp];W[rf]
+C[Another probe
+]
+(;B[re]
+C[The correct answer -
+];W[gp]
+C[An interesting idea
+]
+(;B[dm]
+C[An overplay -
+];W[fp]
+C[The strongest answer
+];B[gq];W[hp];B[hq];W[io];B[cm];W[em]
+C[A tesuji
+];B[dk]
+;W[dl];B[cl];W[el]
+(;B[bk]
+C[This move is correct -
+];W[cj];B[bj];W[ei];B[dj];W[ek];B[ej];W[fj];B[ci]
+;W[gk];B[jl]
+C[Another overplay. This invasion is too deep
+];W[jp];B[iq];W[kk]
+C[The strongest answer 
+];B[fc];W[hc];B[hd];W[ic];B[fi]
+;W[gi];B[fh];W[gh];B[fg];W[gf];B[ff];W[ge];B[kl]
+C[The last chance is to save this stone
+];W[ll];B[lm]
+;W[mm];B[hj];W[gj];B[lk];W[ml];B[kj];W[lj]
+C[A brilliant tesuji! I did not noticed this move
+]
+(;B[mk]
+C[Black has no choice -
+];W[jk];B[li];W[jj];B[mj];W[ji]
+C[Now White is ahead. This is the last comment.
+];B[pk];W[pj];B[mn]
+;W[nn];B[nm];W[nl];B[ol];W[om];B[nk];W[nm];B[ql];W[oj];B[ok]
+;W[pm];B[qj];W[rk];B[rj];W[rl];B[rm];W[qm];B[sl];W[pl];B[sk]
+;W[ql];B[ro];W[oh];B[ep];W[eo];B[fo];W[eq];B[ln];W[no];B[ep]
+;W[fn];B[do];W[eq];B[lp];W[km];B[ep];W[go];B[ng];W[pf];B[nd]
+;W[qe];B[mc];W[eq];B[kf];W[dr];B[ds];W[ke];B[le];W[ld];B[je]
+;W[kd];B[rd];W[mh];B[lg];W[lh];B[kh];W[mi];B[ki];W[nj];B[md]
+;W[jg];B[kg];W[mg];B[me];W[lj];B[cb];W[db];B[lb];W[jh];B[lf]
+;W[kb];B[de];W[ee];B[ef];W[mq];B[mr];W[jr];B[dq];W[np];B[or]
+;W[lr];B[lq];W[mp];B[ls];W[kr])
+(;B[jk];W[mj];B[kh];W[mh];B[lg];W[nf];B[le];W[md]
+C[It would be difficult to survive
+]))
+(;B[cj];W[bk];B[bj];W[ek];B[dj];W[dn];B[bl];W[bm];B[ak]
+;W[fi];B[eh];W[gg]
+C[The squeeze would be painful for Black
+]))
+(;B[in];W[jm];B[hl]
+C[It would be better to defend like this
+]))
+(;B[rg];W[qg];B[rh];W[qe];B[pf];W[rd];B[sf];W[re];B[qi]
+;W[pe];B[ph];W[of];B[pg];W[od]
+C[The trade would be favourable for White
+]))
+(;B[hf]
+C[It is better to invade the moyo directly
+];W[hd];B[hi]
+C[The opening would be interesting for Black
+]))
+(;W[eq];B[dr];W[er];B[ep];W[fr];B[cp];W[do];B[gq];W[gr]
+;B[hq]
+C[White cannot separate my groups
+]))
+(;B[iq];W[nq];B[po];W[pr];B[qr];W[oq];B[pp];W[ko]
+C[This position would be too comfortable for White
+])
+(;B[ko];W[nq];B[pp];W[ir]
+C[It is always bad to attack like this
+]))
+(;B[ck];W[dr];B[er];W[cq];B[on];W[qb];B[nd]
+C[This is the correct strategy
+]))
+(;W[qn];B[qp];W[qk];B[qi];W[on];B[pm];W[pn];B[mp];W[ok]
+C[This is the basic pattern
+]))

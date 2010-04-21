@@ -16,15 +16,13 @@ public class GoBoard {
 	}
 	
 	public void init() {
-		board[0][0] = WHITE;
-		board[18][18] = BLACK;
-		board[18][9] = WHITE;
-		board[3][4] = WHITE;
-		board[3][3] = BLACK;
-		board[4][3] = WHITE;
-		board[2][3] = WHITE;
-		board[3][2] = WHITE;
-		board[16][2] = WHITE;
+	}
+	
+	public static int[] convertSGFToCoordinates(String sgfCoordinate) {
+		char x = sgfCoordinate.charAt(0);
+		char y = sgfCoordinate.charAt(1);
+		
+		return new int[] { x - 'a', y - 'a' };
 	}
 	
 	public int getPoint(int x, int y) {
