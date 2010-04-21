@@ -15,7 +15,7 @@
   <property name="dir.build"            location="${basedir}/build" />
   <property name="dir.lib"              location="${basedir}/lib" />
   <property name="dir.img"              location="${basedir}/img" />
-  <property name="dir.pgn"              location="${basedir}/sgf" />
+  <property name="dir.sgf"              location="${basedir}/sgf" />
   <property name="dir.font"             location="${basedir}/font" />
   <property name="dir.build.classes"    location="${dir.build}/classes" />
   <property name="file.output"          location="${dir.build}/${kindlet.title}.azw2" />
@@ -111,9 +111,9 @@ Download the 'Personal Basis Profile Reference Implementation'.  Be sure to sele
 	  </fileset>
   	</copy>
   	
-  	<copy todir="${dir.build.classes}/pgn">
-  	  <fileset dir="${dir.pgn}">
-  		<include name="**/*.pgn" />
+  	<copy todir="${dir.build.classes}/sgf">
+  	  <fileset dir="${dir.sgf}">
+  		<include name="**/*.sgf" />
   	  </fileset>
   	</copy>
   	
