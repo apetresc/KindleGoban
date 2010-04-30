@@ -208,7 +208,7 @@ Download the 'Personal Basis Profile Reference Implementation'.  Be sure to sele
           fork="true"
           spawn="true"
           dir="${dir.build}">
-      <arg line="-f ${file.output} --device KindleDX -d -w -p 8080 -s" />
+      <arg line="-f ${file.output} --device KindleDX -d -w -p 8082 -s" />
     </java>
   </target>
 </project>
