@@ -1,4 +1,4 @@
-package com.amazon.kindle.app.go.sgf;
+package com.amazon.kindle.app.go.model.sgf;
 
 import java.util.ArrayList;
 
@@ -9,6 +9,10 @@ public class SGFGameTree {
 
 	public SGFSequence getSequence() {
 		return sequence;
+	}
+	
+	public SGFGameTree[] getSubtrees() {
+		return subtrees;
 	}
 
 	static SGFGameTree fromString(StringBuffer sgf) throws IncorrectFormatException {

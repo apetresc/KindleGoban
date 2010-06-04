@@ -1,4 +1,4 @@
-package com.amazon.kindle.app.go.sgf;
+package com.amazon.kindle.app.go.model.sgf;
 
 public class IncorrectFormatException extends Exception {
 

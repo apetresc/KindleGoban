@@ -1,17 +1,18 @@
-package com.amazon.kindle.app.go.sgf;
+package com.amazon.kindle.app.go.model.sgf;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.List;
 
 public class SGFSequence {
 
-	private ArrayList nodes = new ArrayList();
+	private List nodes = new LinkedList();
 
 	void addNode(SGFNode node) {
 		nodes.add(node);
 	}
 	
-	public ArrayList getNodes() {
+	public List getNodes() {
 		return nodes;
 	}
 

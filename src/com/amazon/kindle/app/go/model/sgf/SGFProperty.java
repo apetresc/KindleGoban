@@ -1,12 +1,12 @@
-package com.amazon.kindle.app.go.sgf;
+package com.amazon.kindle.app.go.model.sgf;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class SGFProperty {
 
 	String propIdent;
 	String propValue;
-	ArrayList propValues;
+	List propValues;
 
 	void addValue(String value) {
 		if (propValue == null && propValues == null) {

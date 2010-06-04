@@ -1,17 +1,18 @@
-package com.amazon.kindle.app.go.sgf;
+package com.amazon.kindle.app.go.model.sgf;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class SGFNode {
 
-	ArrayList properties = new ArrayList();
+	List properties = new ArrayList();
 
 	void addProperty(SGFProperty property) {
 		properties.add(property);
 	}
 	
-	public ArrayList getProperties() {
+	public List getProperties() {
 		return properties;
 	}
 
