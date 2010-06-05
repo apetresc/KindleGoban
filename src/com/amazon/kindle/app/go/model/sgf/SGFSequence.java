@@ -6,44 +6,44 @@ import java.util.List;
 
 public class SGFSequence {
 
-	private List nodes = new LinkedList();
+    private List nodes = new LinkedList();
 
-	void addNode(SGFNode node) {
-		nodes.add(node);
-	}
-	
-	public List getNodes() {
-		return nodes;
-	}
+    void addNode(SGFNode node) {
+        nodes.add(node);
+    }
 
-	static SGFSequence fromString(StringBuffer sgf) throws IncorrectFormatException {
-		SGFSequence sequence = new SGFSequence();
-		sequence.addNode(SGFNode.fromString(sgf));
+    public List getNodes() {
+        return nodes;
+    }
 
-		/* Remove leading whitespace */
-		while (Character.isWhitespace(sgf.charAt(0))) {
-			sgf.deleteCharAt(0);
-		}
+    static SGFSequence fromString(StringBuffer sgf) throws IncorrectFormatException {
+        SGFSequence sequence = new SGFSequence();
+        sequence.addNode(SGFNode.fromString(sgf));
 
-		while (sgf.charAt(0) == ';') {
-			sequence.addNode(SGFNode.fromString(sgf));
+        /* Remove leading whitespace */
+        while (Character.isWhitespace(sgf.charAt(0))) {
+            sgf.deleteCharAt(0);
+        }
 
-			/* Remove leading whitespace */
-			while (Character.isWhitespace(sgf.charAt(0))) {
-				sgf.deleteCharAt(0);
-			}
-		}
+        while (sgf.charAt(0) == ';') {
+            sequence.addNode(SGFNode.fromString(sgf));
 
-		return sequence;
-	}
+            /* Remove leading whitespace */
+            while (Character.isWhitespace(sgf.charAt(0))) {
+                sgf.deleteCharAt(0);
+            }
+        }
 
-	public String toString() {
-		String result = "";
-		Iterator i = nodes.iterator();
-		while (i.hasNext()) {
-			result += i.next().toString();
-		}
-		return result;
-	}
+        return sequence;
+    }
+
+    public String toString() {
+        String result = "";
+        Iterator i = nodes.iterator();
+        while (i.hasNext()) {
+            result += i.next().toString();
+        }
+        return result;
+    }
 
 }
