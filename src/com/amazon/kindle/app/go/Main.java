@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.Transparency;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import com.amazon.kindle.kindlet.AbstractKindlet;
 import com.amazon.kindle.kindlet.KindletContext;
+import com.amazon.kindle.kindlet.ui.KButton;
 import com.amazon.kindle.kindlet.ui.KImage;
 import com.amazon.kindle.kindlet.ui.KindletUIResources;
 import com.amazon.kindle.kindlet.ui.KindletUIResources.KColorName;
@@ -20,7 +23,6 @@ import com.amazon.kindle.kindlet.ui.image.ImageUtil;
 import com.amazon.kindle.app.go.model.sgf.IncorrectFormatException;
 import com.amazon.kindle.app.go.model.sgf.SGF;
 import com.amazon.kindle.app.go.model.sgf.SGFIterator;
-import com.amazon.kindle.app.go.model.sgf.SGFNode;
 
 public class Main extends AbstractKindlet {
 	
@@ -40,18 +42,18 @@ public class Main extends AbstractKindlet {
 	/** The KImage component containing <code>boardImage</code> */
 	private KImage boardComponent;
 	
+	GoBoard board;
+	private SGFIterator sgfIterator;
+	
 	private final Logger log = Logger.getLogger(Main.class);
 
 	public void create(KindletContext context) {
 		this.context = context;
-		GoBoard board = new GoBoard(19);
+		board = new GoBoard(19);
 		board.init();
 		
 		root = context.getRootContainer();
-		boardImage = ImageUtil.createCompatibleImage(board.getSize() * SQUARE_SIZE + STONE_SIZE + GLOBAL_X_OFFSET, board.getSize() * SQUARE_SIZE + STONE_SIZE + GLOBAL_Y_OFFSET, Transparency.TRANSLUCENT);
-		Graphics2D g = boardImage.createGraphics();
-		g.setColor(context.getUIResources().getBackgroundColor(KindletUIResources.KColorName.WHITE));
-		g.fillRect(0, 0, board.getSize() * SQUARE_SIZE, board.getSize() * SQUARE_SIZE);
+		boardImage = ImageUtil.createCompatibleImage(board.getSize() * SQUARE_SIZE + STONE_SIZE + GLOBAL_X_OFFSET, board.getSize() * SQUARE_SIZE + STONE_SIZE + GLOBAL_Y_OFFSET, Transparency.TRANSLUCENT);		
 	
 		root.setLayout(new BorderLayout());
 		boardComponent = new KImage(boardImage);
@@ -64,18 +66,35 @@ public class Main extends AbstractKindlet {
 			e.printStackTrace();
 		}
 		
-		SGFIterator sgfIterator = sgfParser.iterator();
-		while (sgfIterator.hasNext()) {
-			SGFNode node = sgfIterator.next();
-			board.applyNode(node);
-		}
+		sgfIterator = sgfParser.iterator();
+		KButton button = new KButton("Next move");
+		button.addActionListener(new ActionListener() {
 
+			public void actionPerformed(ActionEvent arg0) {
+				if (sgfIterator.hasNext()) {
+					board.applyNode(sgfIterator.next());
+					drawBoard(board);
+					boardComponent.setImage(boardImage);
+					boardComponent.repaint();
+				}
+				
+			}
+			
+		});
+		for (int i = 0; i < 60; i++) { board.applyNode(sgfIterator.next()); }
+		
 		drawBoard(board);
+		boardComponent.setImage(boardImage);
+		boardComponent.repaint();
+		root.add(button, BorderLayout.SOUTH);
+
 	}
 
 	public void drawBoard(GoBoard board) {
 		log.info("Drawing board!\n\n");
 		Graphics2D g = boardImage.createGraphics();
+		g.setColor(context.getUIResources().getBackgroundColor(KindletUIResources.KColorName.WHITE));
+		g.fillRect(0, 0, board.getSize() * SQUARE_SIZE, board.getSize() * SQUARE_SIZE);
 		
 		final int X_OFFSET = STONE_SIZE/2 + GLOBAL_X_OFFSET;
 		final int Y_OFFSET = STONE_SIZE/2 + GLOBAL_Y_OFFSET;
