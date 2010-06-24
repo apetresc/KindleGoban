@@ -3,9 +3,10 @@ package com.amazon.kindle.app.go;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Graphics2D;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.Transparency;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,15 +15,13 @@ import org.apache.log4j.Logger;
 
 import com.amazon.kindle.kindlet.AbstractKindlet;
 import com.amazon.kindle.kindlet.KindletContext;
-import com.amazon.kindle.kindlet.ui.KButton;
+import com.amazon.kindle.kindlet.event.KindleKeyCodes;
 import com.amazon.kindle.kindlet.ui.KImage;
 import com.amazon.kindle.kindlet.ui.KindletUIResources;
 import com.amazon.kindle.kindlet.ui.KindletUIResources.KColorName;
 import com.amazon.kindle.kindlet.ui.image.ImageUtil;
 
 import com.amazon.kindle.app.go.model.sgf.IncorrectFormatException;
-import com.amazon.kindle.app.go.model.sgf.SGF;
-import com.amazon.kindle.app.go.model.sgf.SGFIterator;
 
 public class Main extends AbstractKindlet {
 
@@ -42,14 +41,42 @@ public class Main extends AbstractKindlet {
     /** The KImage component containing <code>boardImage</code> */
     private KImage boardComponent;
 
-    GoBoard board;
-    private SGFIterator sgfIterator;
+    private GoBoard board;
+    private GoBoardController controller;
 
     private final Logger log = Logger.getLogger(Main.class);
 
+    class GlobalDispatcher implements KeyEventDispatcher {
+
+        public boolean dispatchKeyEvent(final KeyEvent e) {
+            if (e.isConsumed() || e.getID() == KeyEvent.KEY_RELEASED) return false;
+            
+            switch (e.getKeyCode()) {
+            case KindleKeyCodes.VK_FIVE_WAY_RIGHT:
+                if (controller != null) {
+                    e.consume();
+                    controller.nextMove();
+                    drawBoard(board);
+                }
+                return true;
+            case KindleKeyCodes.VK_FIVE_WAY_LEFT:
+                if (controller != null) {
+                    e.consume();
+                    controller.previousMove();
+                    drawBoard(board);
+                }
+            default:
+                return false;
+            }
+        }
+        
+    }
+    
     public void create(KindletContext context) {
         this.context = context;
         root = context.getRootContainer();
+        
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new GlobalDispatcher());
 
         board = new GoBoard(19);
         board.init();
@@ -58,40 +85,27 @@ public class Main extends AbstractKindlet {
 
         root.setLayout(new BorderLayout());
         boardComponent = new KImage(boardImage);
+        boardComponent.setFocusable(true);
         root.add(boardComponent, BorderLayout.NORTH);
 
-        SGF sgfParser = new SGF();
+      
         try {
-            sgfParser.parseSGF(new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(SGF_DIR + "sgf24.sgf"))));
+            controller = new GoBoardController(board);
+            controller.loadSGF(new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(SGF_DIR + "sgf24.sgf"))));
         } catch (IncorrectFormatException e) {
             e.printStackTrace();
         }
-
-        sgfIterator = sgfParser.iterator();
-        KButton button = new KButton("Next move");
-        button.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                if (sgfIterator.hasNext()) {
-                    board.applyNode(sgfIterator.next());
-                    drawBoard(board);
-                    boardComponent.setImage(boardImage);
-                    boardComponent.repaint();
-                }
-
-            }
-
-        });
-        for (int i = 0; i < 60; i++) { board.applyNode(sgfIterator.next()); }
+        
+        controller.goToMove(50);
 
         drawBoard(board);
-        boardComponent.setImage(boardImage);
-        boardComponent.repaint();
-        root.add(button, BorderLayout.SOUTH);
-
     }
 
     public void drawBoard(GoBoard board) {
+        drawBoard(board, true);
+    }
+    
+    public void drawBoard(GoBoard board, boolean repaint) {
         log.info("Drawing board!\n\n");
         Graphics2D g = boardImage.createGraphics();
         g.setColor(context.getUIResources().getBackgroundColor(KindletUIResources.KColorName.WHITE));
@@ -186,5 +200,8 @@ public class Main extends AbstractKindlet {
                 }
             }
         }
+        
+        boardComponent.setImage(boardImage);
+        boardComponent.repaint();
     }
 }

@@ -1,5 +1,6 @@
 package com.amazon.kindle.app.go;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -80,7 +81,8 @@ public class GoBoard {
             SGFProperty property = (SGFProperty) it.next();
             if (property.getIdent().equals("B") || property.getIdent().equals("W")) {
                 int[] point = convertSGFToCoordinates(property.getValues()[0]);
-                log.info("Applying move to " + point[0] + "," + point[1]);
+                ArrayList capturedStones = null;
+                
                 this.setPoint(property.getIdent().equals("B") ? BLACK : WHITE, point[0], point[1]);
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
@@ -88,11 +90,33 @@ public class GoBoard {
                         if (getPoint(point[0]+dx, point[1]+dy) == (property.getIdent().equals("B") ? WHITE : BLACK)) {
                             int[][] group = floodFill(point[0]+dx, point[1]+dy);
                             if (countLiberties(group) == 0) {
+                                if (capturedStones == null) capturedStones = new ArrayList();
                                 for (int i = 0; i < group.length; i++) {
                                     setPoint(BLANK, group[i][0], group[i][1]);
+                                    capturedStones.add(new int[] {group[i][0], group[i][1]});
                                 }
+                                node.setCaptures((int[][]) capturedStones.toArray(new int[0][2]));
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+    
+    public void rewindNode(SGFNode node) {
+        List properties = node.getProperties();
+        Iterator it = properties.iterator();
+        while (it.hasNext()) {
+            SGFProperty property = (SGFProperty) it.next();
+            if (property.getIdent().equals("B") || property.getIdent().equals("W")) {
+                int[] point = convertSGFToCoordinates(property.getValues()[0]);
+                
+                this.setPoint(BLANK, point[0], point[1]);
+                if (node.getCaptures() != null) {
+                    int[][] captures = node.getCaptures();
+                    for (int i = 0; i < captures.length; i++) {
+                        this.setPoint(property.getIdent().equals("B") ? WHITE : BLACK, captures[i][0], captures[i][1]);
                     }
                 }
             }

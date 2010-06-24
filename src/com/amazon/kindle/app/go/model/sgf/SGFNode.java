@@ -7,6 +7,8 @@ import java.util.List;
 public class SGFNode {
 
     List properties = new ArrayList();
+    
+    int[][] captures;
 
     void addProperty(SGFProperty property) {
         properties.add(property);
@@ -38,6 +40,14 @@ public class SGFNode {
         }
 
         return node;
+    }
+    
+    public void setCaptures(int[][] captures) {
+        this.captures = captures;
+    }
+    
+    public int[][] getCaptures() {
+        return captures;
     }
 
     public String toString() {

@@ -9,7 +9,7 @@ public class SGF {
 
     public void parseSGF(String sgf) throws IncorrectFormatException {
         StringBuffer sgfBuf = new StringBuffer(sgf);
-        this.gameTree = SGFGameTree.fromString(sgfBuf);
+        this.gameTree = SGFGameTree.fromString(sgfBuf, null);
     }
 
     public void parseSGF(BufferedReader in) throws IncorrectFormatException {

@@ -5,18 +5,27 @@ import java.util.ArrayList;
 public class SGFGameTree {
 
     private SGFSequence sequence;
+    private SGFGameTree parent;
     private SGFGameTree[] subtrees;
 
     public SGFSequence getSequence() {
         return sequence;
     }
+    
+    public SGFGameTree getParent() {
+        return parent;
+    }
 
     public SGFGameTree[] getSubtrees() {
         return subtrees;
     }
+    
+    public SGFGameTree(SGFGameTree parent) {
+        this.parent = parent;
+    }
 
-    static SGFGameTree fromString(StringBuffer sgf) throws IncorrectFormatException {
-        SGFGameTree gameTree = new SGFGameTree();
+    static SGFGameTree fromString(StringBuffer sgf, SGFGameTree parent) throws IncorrectFormatException {
+        SGFGameTree gameTree = new SGFGameTree(parent);
         ArrayList subtrees = new ArrayList();
 
         /* Remove leading whitespace */
@@ -42,7 +51,7 @@ public class SGFGameTree {
         }
 
         while (!(sgf.charAt(0) == ')')) {
-            subtrees.add(SGFGameTree.fromString(sgf));
+            subtrees.add(SGFGameTree.fromString(sgf, gameTree));
         }
         gameTree.subtrees = (SGFGameTree[]) subtrees.toArray(new SGFGameTree[0]);
 
