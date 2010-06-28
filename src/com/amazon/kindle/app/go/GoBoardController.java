@@ -25,13 +25,13 @@ public class GoBoardController {
         currentMoveNumber = 0;
     }
     
-    public boolean nextMove() {
+    public int[][] nextMove() {
         if (sgfIterator == null || !sgfIterator.hasNext()) {
-            return false;
+            return null;
         }
-        board.applyNode(sgfIterator.next());
+        int[][] affectedPoints = board.applyNode(sgfIterator.next());
         currentMoveNumber++;
-        return true;
+        return affectedPoints;
     }
     
     public boolean previousMove() {
@@ -44,7 +44,7 @@ public class GoBoardController {
     }
     
     public boolean goToMove(int move) {
-        while (currentMoveNumber < move && nextMove()) { }
+        while (currentMoveNumber < move && (nextMove() != null)) { }
         return currentMoveNumber == move;
     }
     

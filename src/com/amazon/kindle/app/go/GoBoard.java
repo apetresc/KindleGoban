@@ -17,6 +17,7 @@ public class GoBoard {
     private int size;
     private int[][] board;
     private int[][][] markup;
+    private String comment;
 
     public static final int OFF_BOARD = -1;
     public static final int BLANK = 0;
@@ -49,6 +50,10 @@ public class GoBoard {
 
         return new int[] { x - 'a', y - 'a' };
     }
+    
+    public String getComment() {
+        return (comment == null) ? "" : comment;
+    }
 
     public int getPoint(int x, int y) {
         if (x >= size || x < 0 || y >= size || y < 0)
@@ -74,14 +79,17 @@ public class GoBoard {
         return this.size;
     }
 
-    public void applyNode(SGFNode node) {
+    public int[][] applyNode(SGFNode node) {
+        comment = null;
+        ArrayList capturedStones = null;
+        int[] point = null;
+        
         List properties = node.getProperties();
         Iterator it = properties.iterator();
         while (it.hasNext()) {
             SGFProperty property = (SGFProperty) it.next();
             if (property.getIdent().equals("B") || property.getIdent().equals("W")) {
-                int[] point = convertSGFToCoordinates(property.getValues()[0]);
-                ArrayList capturedStones = null;
+                point = convertSGFToCoordinates(property.getValues()[0]);
                 
                 this.setPoint(property.getIdent().equals("B") ? BLACK : WHITE, point[0], point[1]);
                 for (int dx = -1; dx <= 1; dx++) {
@@ -89,7 +97,7 @@ public class GoBoard {
                         if ((dx+dy != 1) && (dx+dy != -1)) continue;
                         if (getPoint(point[0]+dx, point[1]+dy) == (property.getIdent().equals("B") ? WHITE : BLACK)) {
                             int[][] group = floodFill(point[0]+dx, point[1]+dy);
-                            if (countLiberties(group) == 0) {
+                            if (!hasLiberties(group)) {
                                 if (capturedStones == null) capturedStones = new ArrayList();
                                 for (int i = 0; i < group.length; i++) {
                                     setPoint(BLANK, group[i][0], group[i][1]);
@@ -100,11 +108,30 @@ public class GoBoard {
                         }
                     }
                 }
+            } else if (property.getIdent().equals("C")) {
+                comment = property.getValues()[0];
             }
         }
+        
+        if (point == null) {
+            return new int[0][0];
+        } else if (point != null && capturedStones == null) {
+            return new int[][] { point };
+        } else if (point != null && capturedStones != null) {
+            int[][] affectedPoints = new int[node.getCaptures().length + 1][2];
+            affectedPoints[0] = point;
+            int[][] captures = node.getCaptures();
+            for (int i = 0; i < captures.length; i++) {
+                affectedPoints[i+1] = captures[i];
+            }
+            return affectedPoints;
+        }
+        
+        return null;
     }
     
     public void rewindNode(SGFNode node) {
+        comment = null;
         List properties = node.getProperties();
         Iterator it = properties.iterator();
         while (it.hasNext()) {
@@ -119,6 +146,8 @@ public class GoBoard {
                         this.setPoint(property.getIdent().equals("B") ? WHITE : BLACK, captures[i][0], captures[i][1]);
                     }
                 }
+            } else if (property.getIdent().equals("C")) {
+                comment = property.getValues()[0];
             }
         }
     }
@@ -127,10 +156,8 @@ public class GoBoard {
         Set group = new HashSet();
         LinkedList points = new LinkedList();
         points.add(new int[] {x, y});
-        String debug = "{";
         while (!points.isEmpty()) {
             int[] point = (int[]) points.removeFirst();
-            debug += point[0] + "," + point[1] + "  ";
             group.add(point);
             for (int dx = -1; dx <= 1; dx++) {
                 inner:
@@ -150,11 +177,25 @@ public class GoBoard {
                     }
             }
         }
-        debug += "}";
-        log.info(debug);
         return (int[][]) group.toArray(new int[][] {});
     }
+    
+    private boolean hasLiberties(int[][] points) {
+        for (int i = 0; i < points.length; i++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                    for (int dy = -1; dy <= 1; dy++) {
+                        if ((dx+dy != 1) && (dx+dy != -1)) continue;
+                        if (getPoint(points[i][0]+dx, points[i][1]+dy) != BLANK) continue;
+                        
+                        return true;
+                    }
+            }
+        }
+        
+        return false;
+    }
 
+    /**
     private int countLiberties(int[][] points) {
         int libertyCount = 0;
         Set liberties = new HashSet();
@@ -179,7 +220,8 @@ public class GoBoard {
                     }
             }
         }
-        log.info("Group at " + points[0][0] + "," + points[0][1] + " have " + libertyCount + " liberties");
         return libertyCount;
     }
+    */
+    
 }
