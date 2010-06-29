@@ -8,7 +8,8 @@ public class SGFNode {
 
     List properties = new ArrayList();
     
-    int[][] captures;
+    private int[][] captures;
+    private String previousComment;
 
     void addProperty(SGFProperty property) {
         properties.add(property);
@@ -48,6 +49,14 @@ public class SGFNode {
     
     public int[][] getCaptures() {
         return captures;
+    }
+    
+    public void setPreviousComment(String previousComment) {
+        this.previousComment = previousComment;
+    }
+    
+    public String getPreviousComment() {
+        return previousComment;
     }
 
     public String toString() {

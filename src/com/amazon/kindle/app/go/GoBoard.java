@@ -76,6 +76,7 @@ public class GoBoard {
     }
 
     public int[][] applyNode(SGFNode node) {
+        node.setPreviousComment(comment);
         comment = null;
         ArrayList capturedStones = null;
         int[] point = null;
@@ -127,7 +128,7 @@ public class GoBoard {
     }
     
     public void rewindNode(SGFNode node) {
-        comment = null;
+        comment = node.getPreviousComment();
         List properties = node.getProperties();
         Iterator it = properties.iterator();
         while (it.hasNext()) {
@@ -142,8 +143,6 @@ public class GoBoard {
                         this.setPoint(property.getIdent().equals("B") ? WHITE : BLACK, captures[i][0], captures[i][1]);
                     }
                 }
-            } else if (property.getIdent().equals("C")) {
-                comment = property.getValues()[0];
             }
         }
     }
