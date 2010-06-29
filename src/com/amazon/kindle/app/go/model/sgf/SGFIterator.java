@@ -38,7 +38,7 @@ public class SGFIterator {
             } else if (this.tree.getParent() != null) {
                 this.tree = this.tree.getParent();
                 this.currentSequence = tree.getSequence();
-                inner = currentSequence.getNodes().listIterator(currentSequence.getNodes().size() - 1);
+                inner = currentSequence.getNodes().listIterator(currentSequence.getNodes().size());
                 return previous();
             }
         } catch (NullPointerException npe) {

@@ -1,8 +1,10 @@
 package com.amazon.kindle.app.go;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Transparency;
@@ -72,6 +74,7 @@ public class Main extends AbstractKindlet {
                     controller.previousMove();
                     drawBoard(board);
                 }
+                return true;
             default:
                 return false;
             }
@@ -90,16 +93,26 @@ public class Main extends AbstractKindlet {
 
         boardImage = ImageUtil.createCompatibleImage(board.getSize() * SQUARE_SIZE + STONE_SIZE + GLOBAL_X_OFFSET, board.getSize() * SQUARE_SIZE + STONE_SIZE + GLOBAL_Y_OFFSET, Transparency.OPAQUE);		
 
-        root.setLayout(new BorderLayout());
+        root.setLayout(new GridBagLayout());
         
         boardComponent = new KImage(boardImage);
         boardComponent.setFocusable(true);
-        root.add(boardComponent, BorderLayout.NORTH);
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.insets = new Insets(0, 0, 0, 0);
+        gc.weighty = 0.0;
+        gc.anchor = GridBagConstraints.NORTH;
+        root.add(boardComponent, gc);
         
         commentComponent = new KTextArea();
         commentComponent.setFocusable(false);
         commentComponent.setBorder(new KLineBorder());
-        root.add(commentComponent, BorderLayout.SOUTH);
+        gc.gridy = 1;
+        gc.weighty = 1.0;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.insets = new Insets(0, GLOBAL_X_OFFSET + STONE_SIZE/2, GLOBAL_Y_OFFSET, GLOBAL_X_OFFSET + STONE_SIZE/2);
+        root.add(commentComponent, gc);
       
         try {
             controller = new GoBoardController(board);
@@ -117,8 +130,8 @@ public class Main extends AbstractKindlet {
     
     public void drawBoard(GoBoard board, int[][] affectedPoints, boolean repaint) {
         if (board.getComment() != null) {
-            commentComponent.setText(board.getComment() + board.getComment() + board.getComment() + board.getComment() + board.getComment() + board.getComment() + board.getComment());
-            //commentComponent.repaint();
+            commentComponent.setText(board.getComment());
+            commentComponent.repaint();
         }
         
         final int X_OFFSET = STONE_SIZE/2 + GLOBAL_X_OFFSET;
@@ -162,8 +175,8 @@ public class Main extends AbstractKindlet {
     public void drawBoard(GoBoard board, boolean repaint) {
         log.info("Drawing board!\n\n");
         if (board.getComment() != null) {
-            commentComponent.setText(board.getComment() + board.getComment() + board.getComment() + board.getComment() + board.getComment() + board.getComment() + board.getComment());
-            //commentComponent.repaint();
+            commentComponent.setText(board.getComment());
+            commentComponent.repaint();
         }
         Graphics2D g = boardImage.createGraphics();
         g.setColor(context.getUIResources().getBackgroundColor(KindletUIResources.KColorName.WHITE));

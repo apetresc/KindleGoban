@@ -7,8 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
 import com.amazon.kindle.app.go.model.sgf.SGFNode;
 import com.amazon.kindle.app.go.model.sgf.SGFProperty;
 
@@ -29,8 +27,6 @@ public class GoBoard {
     public static final int CIRCLE   = MARKUP + 1;
     public static final int TRIANGLE = MARKUP + 2;
     public static final int SQUARE   = MARKUP + 3;
-
-    private final Logger log = Logger.getLogger(GoBoard.class);
 
     public GoBoard(int size) {
         this.size = size;
