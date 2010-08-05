@@ -170,6 +170,7 @@ public class Main extends AbstractKindlet {
                             controller = new GoBoardController(board);
                             try {
                                 controller.loadSGF(new BufferedReader(new FileReader(sgfFile)));
+                                controller.nextMove();
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
                             } catch (IncorrectFormatException e) {
@@ -180,6 +181,7 @@ public class Main extends AbstractKindlet {
                             root.add(mainPanel);
                             boardHasFocus = true;
                             root.repaint();
+                            drawBoard(board);
                         }
                         
                     });
@@ -215,6 +217,7 @@ public class Main extends AbstractKindlet {
         try {
             controller = new GoBoardController(board);
             controller.loadSGF(new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(SGF_DIR + "sgf24.sgf"))));
+            controller.nextMove();
         } catch (IncorrectFormatException e) {
             e.printStackTrace();
         }
