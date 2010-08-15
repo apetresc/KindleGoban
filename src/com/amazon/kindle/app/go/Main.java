@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -44,6 +46,7 @@ import com.amazon.kindle.kindlet.ui.image.ImageUtil;
 import com.amazon.kindle.app.go.model.sgf.IncorrectFormatException;
 import com.amazon.kindle.app.go.model.sgf.SGFFilenameFilter;
 import com.amazon.kindle.app.go.ui.KCommentArea;
+import com.amazon.kindle.app.go.ui.KGoBoardComponent;
 import com.amazon.kindle.app.go.ui.KSelectableLabel;
 
 public class Main extends AbstractKindlet {
@@ -59,10 +62,7 @@ public class Main extends AbstractKindlet {
 
     private KindletContext context;
     private Container root;
-    /** An image of the current position on the GoBoard */
-    private BufferedImage boardImage;
-    /** The KImage component containing <code>boardImage</code> */
-    private KImage boardComponent;
+    private KGoBoardComponent boardComponent;
     private KLabelMultiline commentComponent;
 
     private GoBoard board;
@@ -83,17 +83,21 @@ public class Main extends AbstractKindlet {
                     e.consume();
                     int[][] affectedStones = controller.nextMove();
                     if (affectedStones.length == 1) {
-                        drawBoard(board, affectedStones, true);
-                    } else {
-                        drawBoard(board);
+                        //TODO: Change applyNode to return a Set automatically.
+                        Set affectedStonesSet = new HashSet();
+                        for (int i = 0; i < affectedStones.length; i++) {
+                            affectedStonesSet.add(affectedStones[i]);
+                        }
+                        boardComponent.setAffectedSquares(affectedStonesSet);
                     }
+                    boardComponent.repaint();
                 }
                 return true;
             case KindleKeyCodes.VK_FIVE_WAY_LEFT:
                 if (controller != null) {
                     e.consume();
                     controller.previousMove();
-                    drawBoard(board);
+                    boardComponent.repaint();
                 }
                 return true;
             default:
@@ -112,10 +116,8 @@ public class Main extends AbstractKindlet {
 
         board = new GoBoard(19);
         board.init();
-
-        boardImage = ImageUtil.createCompatibleImage(board.getSize() * SQUARE_SIZE + STONE_SIZE + GLOBAL_X_OFFSET, board.getSize() * SQUARE_SIZE + STONE_SIZE + GLOBAL_Y_OFFSET, Transparency.OPAQUE);		
         
-        boardComponent = new KImage(boardImage);
+        boardComponent = new KGoBoardComponent(board);
         boardComponent.setFocusable(true);
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
@@ -181,7 +183,6 @@ public class Main extends AbstractKindlet {
                             root.add(mainPanel);
                             boardHasFocus = true;
                             root.repaint();
-                            drawBoard(board);
                         }
                         
                     });
@@ -221,159 +222,6 @@ public class Main extends AbstractKindlet {
         } catch (IncorrectFormatException e) {
             e.printStackTrace();
         }
-
-        drawBoard(board);
-    }
-
-    public void drawBoard(GoBoard board) {
-        drawBoard(board, true);
     }
     
-    public void drawBoard(GoBoard board, int[][] affectedPoints, boolean repaint) {
-        if (board.getComment() != null) {
-            commentComponent.setText(board.getComment());
-            commentComponent.repaint();
-        }
-        
-        final int X_OFFSET = STONE_SIZE/2 + GLOBAL_X_OFFSET;
-        final int Y_OFFSET = STONE_SIZE/2 + GLOBAL_Y_OFFSET;
-        
-        Graphics2D g = boardImage.createGraphics();
-        
-        for (int i = 0; i < affectedPoints.length; i++) {
-            int x = affectedPoints[i][0];
-            int y = affectedPoints[i][1];
-            
-            switch (board.getPoint(x, y)) {
-            case GoBoard.BLACK:
-                g.setColor(context.getUIResources().getColor(KColorName.BLACK));
-                g.fillOval(X_OFFSET + x * SQUARE_SIZE - STONE_SIZE/2 - 1,
-                        Y_OFFSET + y * SQUARE_SIZE - STONE_SIZE/2 - 1, 
-                        STONE_SIZE+2,
-                        STONE_SIZE+2);
-                break;
-            case GoBoard.WHITE:
-                g.setColor(context.getUIResources().getColor(KColorName.BLACK));
-                g.fillOval(X_OFFSET + x * SQUARE_SIZE - STONE_SIZE/2,
-                        Y_OFFSET + y * SQUARE_SIZE - STONE_SIZE/2,
-                        STONE_SIZE+1,
-                        STONE_SIZE+1);
-                g.setColor(context.getUIResources().getColor(KColorName.WHITE));
-                g.fillOval(X_OFFSET + x * SQUARE_SIZE - STONE_SIZE/2 + BORDER_WIDTH/2,
-                        Y_OFFSET + y * SQUARE_SIZE - STONE_SIZE/2 + BORDER_WIDTH/2,
-                        STONE_SIZE - BORDER_WIDTH,
-                        STONE_SIZE - BORDER_WIDTH);
-                break;
-            case GoBoard.BLANK:
-                break;
-            }
-        }
-        
-        boardComponent.setImage(boardImage);
-        boardComponent.repaint();
-    }
-    
-    public void drawBoard(GoBoard board, boolean repaint) {
-        log.info("Drawing board!\n\n");
-        if (board.getComment() != null) {
-            commentComponent.setText(board.getComment());
-            commentComponent.repaint();
-        }
-        Graphics2D g = boardImage.createGraphics();
-        g.setColor(context.getUIResources().getBackgroundColor(KindletUIResources.KColorName.WHITE));
-        g.fillRect(0, 
-                0, 
-                board.getSize() * SQUARE_SIZE + STONE_SIZE + GLOBAL_X_OFFSET, 
-                board.getSize() * SQUARE_SIZE + STONE_SIZE + GLOBAL_Y_OFFSET);
-
-        final int X_OFFSET = STONE_SIZE/2 + GLOBAL_X_OFFSET;
-        final int Y_OFFSET = STONE_SIZE/2 + GLOBAL_Y_OFFSET;
-
-        g.setColor(context.getUIResources().getColor(KColorName.BLACK));
-        // Draw border
-        g.fillRect(0 + X_OFFSET, 
-                0 + Y_OFFSET,
-                BORDER_WIDTH, 
-                (board.getSize() - 1) * SQUARE_SIZE);
-
-        g.fillRect(0 + X_OFFSET,
-                0 + Y_OFFSET,
-                (board.getSize() - 1) * SQUARE_SIZE,
-                BORDER_WIDTH);
-
-        g.fillRect(0 + X_OFFSET,
-                (board.getSize() - 1) * SQUARE_SIZE + Y_OFFSET,
-                (board.getSize() - 1) * SQUARE_SIZE,
-                BORDER_WIDTH);
-
-        g.fillRect((board.getSize() - 1) * SQUARE_SIZE + X_OFFSET,
-                0 + Y_OFFSET, 
-                BORDER_WIDTH, 
-                (board.getSize() - 1) * SQUARE_SIZE + BORDER_WIDTH);
-
-        // Draw grid
-        for (int x = 0; x < board.getSize(); x++) {
-            g.drawLine(0 + X_OFFSET,
-                    x * SQUARE_SIZE + Y_OFFSET,
-                    (board.getSize() - 1) * SQUARE_SIZE + X_OFFSET,
-                    x * SQUARE_SIZE + Y_OFFSET);
-            g.drawLine(x * SQUARE_SIZE + X_OFFSET,
-                    0 + Y_OFFSET,
-                    x * SQUARE_SIZE + X_OFFSET,
-                    (board.getSize() - 1) * SQUARE_SIZE + Y_OFFSET);
-        }
-
-        // Draw star points
-        int[] starPoints = new int[3];
-        switch (board.getSize()) {
-        case 19:
-            starPoints = new int[] {3, 9, 15};
-            break;
-        default:
-            starPoints = new int[0];
-        }
-
-        for (int x = 0; x < starPoints.length; x++) {
-            for (int y = 0; y < starPoints.length; y++) {
-                if (board.getPoint(starPoints[x], starPoints[y]) == GoBoard.BLANK) {
-                    g.fillOval(X_OFFSET + starPoints[x] * SQUARE_SIZE - STAR_SIZE/2,
-                            Y_OFFSET + starPoints[y] * SQUARE_SIZE - STAR_SIZE/2,
-                            STAR_SIZE,
-                            STAR_SIZE);
-                }
-            }
-        }
-
-        // Draw the actual stones
-        for (int x = 0; x < board.getSize(); x++) {
-            for (int y = 0; y < board.getSize(); y++) {
-                switch (board.getPoint(x, y)) {
-                case GoBoard.BLACK:
-                    g.setColor(context.getUIResources().getColor(KColorName.BLACK));
-                    g.fillOval(X_OFFSET + x * SQUARE_SIZE - STONE_SIZE/2 - 1,
-                            Y_OFFSET + y * SQUARE_SIZE - STONE_SIZE/2 - 1, 
-                            STONE_SIZE+2,
-                            STONE_SIZE+2);
-                    break;
-                case GoBoard.WHITE:
-                    g.setColor(context.getUIResources().getColor(KColorName.BLACK));
-                    g.fillOval(X_OFFSET + x * SQUARE_SIZE - STONE_SIZE/2,
-                            Y_OFFSET + y * SQUARE_SIZE - STONE_SIZE/2,
-                            STONE_SIZE+1,
-                            STONE_SIZE+1);
-                    g.setColor(context.getUIResources().getColor(KColorName.WHITE));
-                    g.fillOval(X_OFFSET + x * SQUARE_SIZE - STONE_SIZE/2 + BORDER_WIDTH/2,
-                            Y_OFFSET + y * SQUARE_SIZE - STONE_SIZE/2 + BORDER_WIDTH/2,
-                            STONE_SIZE - BORDER_WIDTH,
-                            STONE_SIZE - BORDER_WIDTH);
-                    break;
-                case GoBoard.BLANK:
-                    break;
-                }
-            }
-        }
-        
-        boardComponent.setImage(boardImage);
-        boardComponent.repaint();
-    }
 }
