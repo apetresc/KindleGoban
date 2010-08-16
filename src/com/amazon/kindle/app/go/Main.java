@@ -1,26 +1,19 @@
 package com.amazon.kindle.app.go;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.Transparency;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -28,20 +21,12 @@ import org.apache.log4j.Logger;
 import com.amazon.kindle.kindlet.AbstractKindlet;
 import com.amazon.kindle.kindlet.KindletContext;
 import com.amazon.kindle.kindlet.event.KindleKeyCodes;
-import com.amazon.kindle.kindlet.ui.KBoxLayout;
 import com.amazon.kindle.kindlet.ui.KButton;
-import com.amazon.kindle.kindlet.ui.KImage;
 import com.amazon.kindle.kindlet.ui.KLabel;
 import com.amazon.kindle.kindlet.ui.KLabelMultiline;
 import com.amazon.kindle.kindlet.ui.KMenu;
 import com.amazon.kindle.kindlet.ui.KMenuItem;
 import com.amazon.kindle.kindlet.ui.KPanel;
-import com.amazon.kindle.kindlet.ui.KTextArea;
-import com.amazon.kindle.kindlet.ui.KindletUIResources;
-import com.amazon.kindle.kindlet.ui.KindletUIResources.KColorName;
-import com.amazon.kindle.kindlet.ui.border.KEmptyBorder;
-import com.amazon.kindle.kindlet.ui.border.KLineBorder;
-import com.amazon.kindle.kindlet.ui.image.ImageUtil;
 
 import com.amazon.kindle.app.go.model.sgf.IncorrectFormatException;
 import com.amazon.kindle.app.go.model.sgf.SGFFilenameFilter;
@@ -53,14 +38,11 @@ public class Main extends AbstractKindlet {
 
     private static final int SQUARE_SIZE = 40;
     private static final int STONE_SIZE  = SQUARE_SIZE;
-    private static final int STAR_SIZE = STONE_SIZE/5;
     private static final int GLOBAL_X_OFFSET = 30;
     private static final int GLOBAL_Y_OFFSET = 20;
-    private static final int BORDER_WIDTH = 4;
 
     private static final String SGF_DIR = "/sgf/";
 
-    private KindletContext context;
     private Container root;
     private KGoBoardComponent boardComponent;
     private KLabelMultiline commentComponent;
@@ -81,15 +63,8 @@ public class Main extends AbstractKindlet {
             case KindleKeyCodes.VK_FIVE_WAY_RIGHT:
                 if (controller != null) {
                     e.consume();
-                    int[][] affectedStones = controller.nextMove();
-                    if (affectedStones.length == 1) {
-                        //TODO: Change applyNode to return a Set automatically.
-                        Set affectedStonesSet = new HashSet();
-                        for (int i = 0; i < affectedStones.length; i++) {
-                            affectedStonesSet.add(affectedStones[i]);
-                        }
-                        boardComponent.setAffectedSquares(affectedStonesSet);
-                    }
+                    Set affectedStones = controller.nextMove();
+                    boardComponent.setAffectedSquares(affectedStones);
                     boardComponent.repaint();
                 }
                 return true;
@@ -108,7 +83,6 @@ public class Main extends AbstractKindlet {
     }
     
     public void create(final KindletContext context) {
-        this.context = context;
         root = context.getRootContainer();
         final KPanel mainPanel = new KPanel(new GridBagLayout());
         

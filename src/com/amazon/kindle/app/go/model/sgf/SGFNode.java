@@ -3,12 +3,13 @@ package com.amazon.kindle.app.go.model.sgf;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class SGFNode {
 
     List properties = new ArrayList();
     
-    private int[][] captures;
+    private Set captures;
     private String previousComment;
 
     void addProperty(SGFProperty property) {
@@ -43,11 +44,11 @@ public class SGFNode {
         return node;
     }
     
-    public void setCaptures(int[][] captures) {
+    public void setCaptures(Set captures) {
         this.captures = captures;
     }
     
-    public int[][] getCaptures() {
+    public Set getCaptures() {
         return captures;
     }
     

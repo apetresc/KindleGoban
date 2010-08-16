@@ -1,6 +1,5 @@
 package com.amazon.kindle.app.go;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -75,10 +74,10 @@ public class GoBoard {
         return this.size;
     }
 
-    public int[][] applyNode(SGFNode node) {
+    public Set applyNode(SGFNode node) {
         node.setPreviousComment(comment);
         comment = null;
-        ArrayList capturedStones = null;
+        Set capturedStones = null;
         int[] point = null;
         
         List properties = node.getProperties();
@@ -93,14 +92,16 @@ public class GoBoard {
                     for (int dy = -1; dy <= 1; dy++) {
                         if ((dx+dy != 1) && (dx+dy != -1)) continue;
                         if (getPoint(point[0]+dx, point[1]+dy) == (property.getIdent().equals("B") ? WHITE : BLACK)) {
-                            int[][] group = floodFill(point[0]+dx, point[1]+dy);
+                            Set group = floodFill(point[0]+dx, point[1]+dy);
                             if (!hasLiberties(group)) {
-                                if (capturedStones == null) capturedStones = new ArrayList();
-                                for (int i = 0; i < group.length; i++) {
-                                    setPoint(BLANK, group[i][0], group[i][1]);
-                                    capturedStones.add(new int[] {group[i][0], group[i][1]});
+                                if (capturedStones == null) capturedStones = new HashSet();
+                                Iterator groupIterator = group.iterator();
+                                while (groupIterator.hasNext()) {
+                                    int[] groupPoint = (int[]) groupIterator.next();
+                                    setPoint(BLANK, groupPoint[0], groupPoint[1]);
+                                    capturedStones.add(groupPoint);
                                 }
-                                node.setCaptures((int[][]) capturedStones.toArray(new int[0][2]));
+                                node.setCaptures(capturedStones);
                             }
                         }
                     }
@@ -111,17 +112,15 @@ public class GoBoard {
         }
         
         if (point == null) {
-            return new int[0][0];
+            return null;
         } else if (point != null && capturedStones == null) {
-            return new int[][] { point };
+            capturedStones = new HashSet(1);
+            capturedStones.add(point);
+            return capturedStones;
         } else if (point != null && capturedStones != null) {
-            int[][] affectedPoints = new int[node.getCaptures().length + 1][2];
-            affectedPoints[0] = point;
-            int[][] captures = node.getCaptures();
-            for (int i = 0; i < captures.length; i++) {
-                affectedPoints[i+1] = captures[i];
-            }
-            return affectedPoints;
+            Set affectedStones = new HashSet(capturedStones);
+            affectedStones.add(point);
+            return affectedStones;
         }
         
         return null;
@@ -138,16 +137,18 @@ public class GoBoard {
                 
                 this.setPoint(BLANK, point[0], point[1]);
                 if (node.getCaptures() != null) {
-                    int[][] captures = node.getCaptures();
-                    for (int i = 0; i < captures.length; i++) {
-                        this.setPoint(property.getIdent().equals("B") ? WHITE : BLACK, captures[i][0], captures[i][1]);
+                    Set captures = node.getCaptures();
+                    Iterator captureIterator = captures.iterator();
+                    while (captureIterator.hasNext()) {
+                        int[] capturePoint = (int[]) captureIterator.next();
+                        this.setPoint(property.getIdent().equals("B") ? WHITE : BLACK, capturePoint[0], capturePoint[1]);
                     }
                 }
             }
         }
     }
 
-    private int[][] floodFill(int x, int y) {
+    private Set floodFill(int x, int y) {
         Set group = new HashSet();
         LinkedList points = new LinkedList();
         points.add(new int[] {x, y});
@@ -172,15 +173,17 @@ public class GoBoard {
                     }
             }
         }
-        return (int[][]) group.toArray(new int[][] {});
+        return group;
     }
     
-    private boolean hasLiberties(int[][] points) {
-        for (int i = 0; i < points.length; i++) {
+    private boolean hasLiberties(Set points) {
+        Iterator it = points.iterator();
+        while (it.hasNext()) {
+            int[] point = (int[]) it.next();
             for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
                         if ((dx+dy != 1) && (dx+dy != -1)) continue;
-                        if (getPoint(points[i][0]+dx, points[i][1]+dy) != BLANK) continue;
+                        if (getPoint(point[0]+dx, point[1]+dy) != BLANK) continue;
                         
                         return true;
                     }
@@ -189,34 +192,4 @@ public class GoBoard {
         
         return false;
     }
-
-    /**
-    private int countLiberties(int[][] points) {
-        int libertyCount = 0;
-        Set liberties = new HashSet();
-
-        for (int i = 0; i < points.length; i++) {
-            for (int dx = -1; dx <= 1; dx++) {
-                inner:
-                    for (int dy = -1; dy <= 1; dy++) {
-                        if ((dx+dy != 1) && (dx+dy != -1)) continue;
-                        if (getPoint(points[i][0]+dx, points[i][1]+dy) != BLANK) continue;
-
-                        Iterator it = liberties.iterator();
-                        while (it.hasNext()) {
-                            int[] p = (int[]) it.next();
-                            if ((p[0] == points[i][0] + dx) && (p[1] == points[i][1] + dy)) {
-                                continue inner;
-                            }
-                        }
-
-                        libertyCount++;
-                        liberties.add(new int[] {points[i][0]+dx, points[i][1]+dy});
-                    }
-            }
-        }
-        return libertyCount;
-    }
-    */
-    
 }
