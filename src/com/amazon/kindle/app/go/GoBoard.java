@@ -74,7 +74,7 @@ public class GoBoard {
         return this.size;
     }
 
-    public Set applyNode(SGFNode node) {
+    public void applyNode(SGFNode node) {
         node.setPreviousComment(comment);
         comment = null;
         Set capturedStones = null;
@@ -110,20 +110,6 @@ public class GoBoard {
                 comment = property.getValues()[0];
             }
         }
-        
-        if (point == null) {
-            return null;
-        } else if (point != null && capturedStones == null) {
-            capturedStones = new HashSet(1);
-            capturedStones.add(point);
-            return capturedStones;
-        } else if (point != null && capturedStones != null) {
-            Set affectedStones = new HashSet(capturedStones);
-            affectedStones.add(point);
-            return affectedStones;
-        }
-        
-        return null;
     }
     
     public void rewindNode(SGFNode node) {
@@ -184,12 +170,10 @@ public class GoBoard {
                     for (int dy = -1; dy <= 1; dy++) {
                         if ((dx+dy != 1) && (dx+dy != -1)) continue;
                         if (getPoint(point[0]+dx, point[1]+dy) != BLANK) continue;
-                        
                         return true;
                     }
             }
         }
-        
         return false;
     }
 }

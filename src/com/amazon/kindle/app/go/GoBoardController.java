@@ -1,7 +1,6 @@
 package com.amazon.kindle.app.go;
 
 import java.io.BufferedReader;
-import java.util.Set;
 
 import com.amazon.kindle.app.go.model.sgf.IncorrectFormatException;
 import com.amazon.kindle.app.go.model.sgf.SGF;
@@ -26,13 +25,13 @@ public class GoBoardController {
         currentMoveNumber = 0;
     }
     
-    public Set nextMove() {
+    public boolean nextMove() {
         if (sgfIterator == null || !sgfIterator.hasNext()) {
-            return null;
+            return false;
         }
-        Set affectedPoints = board.applyNode(sgfIterator.next());
+        board.applyNode(sgfIterator.next());
         currentMoveNumber++;
-        return affectedPoints;
+        return true;
     }
     
     public boolean previousMove() {
@@ -45,7 +44,7 @@ public class GoBoardController {
     }
     
     public boolean goToMove(int move) {
-        while (currentMoveNumber < move && (nextMove() != null)) { }
+        while (currentMoveNumber < move && nextMove()) { }
         return currentMoveNumber == move;
     }
     

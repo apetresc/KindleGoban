@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -63,8 +62,7 @@ public class Main extends AbstractKindlet {
             case KindleKeyCodes.VK_FIVE_WAY_RIGHT:
                 if (controller != null) {
                     e.consume();
-                    Set affectedStones = controller.nextMove();
-                    boardComponent.setAffectedSquares(affectedStones);
+                    controller.nextMove();
                     boardComponent.repaint();
                 }
                 return true;
