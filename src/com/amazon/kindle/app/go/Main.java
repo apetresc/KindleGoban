@@ -59,6 +59,8 @@ public class Main extends AbstractKindlet {
                 if (controller != null) {
                     e.consume();
                     controller.nextMove();
+                    commentComponent.setText(board.getComment());
+                    commentComponent.repaint();
                     boardComponent.repaint();
                 }
                 return true;
@@ -66,6 +68,8 @@ public class Main extends AbstractKindlet {
                 if (controller != null) {
                     e.consume();
                     controller.previousMove();
+                    commentComponent.setText(board.getComment());
+                    commentComponent.repaint();
                     boardComponent.repaint();
                 }
                 return true;
