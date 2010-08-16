@@ -94,7 +94,7 @@ public class Main extends AbstractKindlet {
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
         gc.gridy = 0;
-        gc.insets = new Insets(0, 0, 0, 0);
+        gc.insets = new Insets(0, GLOBAL_X_OFFSET, 0, 0);
         gc.weighty = 0.0;
         gc.anchor = GridBagConstraints.NORTH;
         mainPanel.add(boardComponent, gc);
@@ -160,12 +160,13 @@ public class Main extends AbstractKindlet {
                             gc.anchor = GridBagConstraints.NORTH;
                             mainPanel.add(boardComponent, gc);
                             
+                            commentComponent.setText(board.getComment());
+                            
                             root.remove(sgfListPanel);
                             root.add(mainPanel);
                             boardHasFocus = true;
                             root.repaint();
                         }
-                        
                     });
                     gc.gridy = i;
                     sgfListPanel.add(sgfLabel, gc);
