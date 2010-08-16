@@ -15,6 +15,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 
+import org.kwt.ui.KWTSelectableLabel;
+
 import com.amazon.kindle.kindlet.AbstractKindlet;
 import com.amazon.kindle.kindlet.KindletContext;
 import com.amazon.kindle.kindlet.event.KindleKeyCodes;
@@ -29,7 +31,6 @@ import com.amazon.kindle.app.go.model.sgf.IncorrectFormatException;
 import com.amazon.kindle.app.go.model.sgf.SGFFilenameFilter;
 import com.amazon.kindle.app.go.ui.KCommentArea;
 import com.amazon.kindle.app.go.ui.KGoBoardComponent;
-import com.amazon.kindle.app.go.ui.KSelectableLabel;
 
 public class Main extends AbstractKindlet {
 
@@ -132,7 +133,7 @@ public class Main extends AbstractKindlet {
                 gc.anchor = GridBagConstraints.WEST;
                 
                 for (int i = 0; i < sgfList.length; i++) {
-                    final KLabel sgfLabel = new KSelectableLabel(sgfList[i]);
+                    final KLabel sgfLabel = new KWTSelectableLabel(sgfList[i]);
                     final File sgfFile = sgfFiles[i];
                     sgfLabel.setFocusable(true);
                     sgfLabel.setEnabled(true);

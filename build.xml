@@ -14,10 +14,13 @@
   <property name="dir.src"              location="${basedir}/src" />
   <property name="dir.build"            location="${basedir}/build" />
   <property name="dir.lib"              location="${basedir}/lib" />
+  <!-- Set this to the location of the KWT JAR file on your system. -->
+  <property name="jar.kwt"				location="${dir.lib}/kwt-0.1.jar" />
   <property name="dir.img"              location="${basedir}/img" />
   <property name="dir.sgf"              location="${basedir}/sgf" />
   <property name="dir.font"             location="${basedir}/font" />
   <property name="dir.build.classes"    location="${dir.build}/classes" />
+  <property name="dir.build.kwt"		location="${dir.build}/kwt" />
   <property name="file.output"          location="${dir.build}/${kindlet.title}.azw2" />
 
   <!-- Load the password for the keystore -->
@@ -62,10 +65,15 @@ Download the 'Personal Basis Profile Reference Implementation'.  Be sure to sele
     <echo message="Specify the location of the PBP with the property pbp-1.1.  Eg. ant -Dpbp-1.1=PATH-TO-PBP"/>
   </target>
 
+  <target name="extract-kwt">
+    <mkdir dir="${dir.build.kwt}" />
+  	<unjar src="${jar.kwt}" dest="${dir.build.kwt}" />
+  </target>
+
   <!-- ===================================================================== -->
   <!-- | BUILD TARGETS                                                     | -->
   <!-- ===================================================================== -->
-  <target name="compile" description="Compiles the Java source files" depends="check-pbp">
+  <target name="compile" description="Compiles the Java source files" depends="check-pbp,extract-kwt">
     <mkdir dir="${dir.build.classes}" />
   	<mkdir dir="${dir.build.classes}/img" />
     <!--
@@ -87,11 +95,8 @@ Download the 'Personal Basis Profile Reference Implementation'.  Be sure to sele
         <fileset dir="${dir.kdk}/lib">
           <include name="**/*.jar" />
         </fileset>
-      	
-      	<!-- Include third-party libraries -->
-      	<fileset dir="${dir.lib}">
-      	  <include name="**/*.jar" />	
-      	</fileset>
+      	<!-- Include the KWT library on the classpath -->
+      	<pathelement location="${dir.build.kwt}" />
       </classpath>
       <include name="**/*.java" />
     </javac>
@@ -116,12 +121,6 @@ Download the 'Personal Basis Profile Reference Implementation'.  Be sure to sele
   		<include name="**/*.sgf" />
   	  </fileset>
   	</copy>
-  	
-  	<copy todir="${dir.build.classes}/font">
-  	  <fileset dir="${dir.font}">
-  		<include name="**/*.TTF" />
-  	  </fileset>
-  	</copy>
   </target>
   
   <target name="build" depends="compile" description="Alias for compile target"/>
@@ -143,7 +142,9 @@ Download the 'Personal Basis Profile Reference Implementation'.  Be sure to sele
 
   <!-- Developer apps do not have Implementation-Id defined. -->
   <target name="jar-for-developer" description="Jars a file for a developer application">
-    <jar basedir="${dir.build.classes}" destfile="${file.output}">
+    <jar destfile="${file.output}">
+      <fileset dir="${dir.build.classes}" />
+      <fileset dir="${dir.build.kwt}" />
       <manifest>
         <attribute name="Main-Class"             value="${kindlet.mainClass}" />
         <attribute name="Implementation-Vendor"  value="${kindlet.vendor}" />
