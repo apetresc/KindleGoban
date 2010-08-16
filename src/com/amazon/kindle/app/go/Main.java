@@ -15,8 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 
-import org.apache.log4j.Logger;
-
 import com.amazon.kindle.kindlet.AbstractKindlet;
 import com.amazon.kindle.kindlet.KindletContext;
 import com.amazon.kindle.kindlet.event.KindleKeyCodes;
@@ -49,8 +47,6 @@ public class Main extends AbstractKindlet {
     private GoBoard board;
     private GoBoardController controller;
     private boolean boardHasFocus = true;
-
-    private final Logger log = Logger.getLogger(Main.class);
 
     class GlobalDispatcher implements KeyEventDispatcher {
 
@@ -150,6 +146,15 @@ public class Main extends AbstractKindlet {
                             } catch (IncorrectFormatException e) {
                                 e.printStackTrace();
                             }
+                            mainPanel.remove(boardComponent);
+                            boardComponent = new KGoBoardComponent(board);
+                            GridBagConstraints gc = new GridBagConstraints();
+                            gc.gridx = 0;
+                            gc.gridy = 0;
+                            gc.insets = new Insets(0, 0, 0, 0);
+                            gc.weighty = 0.0;
+                            gc.anchor = GridBagConstraints.NORTH;
+                            mainPanel.add(boardComponent, gc);
                             
                             root.remove(sgfListPanel);
                             root.add(mainPanel);
@@ -165,8 +170,7 @@ public class Main extends AbstractKindlet {
                 
 
                 okButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent arg0) {
-                        log.info("OkButton!");
+                    public void actionPerformed(ActionEvent e) {
                         root.remove(sgfListPanel);
                         root.add(mainPanel);
                         boardHasFocus = true;
