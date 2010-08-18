@@ -133,10 +133,11 @@ public class Main extends AbstractKindlet {
                 gc.anchor = GridBagConstraints.WEST;
                 
                 for (int i = 0; i < sgfList.length; i++) {
-                    final KLabel sgfLabel = new KWTSelectableLabel(sgfList[i]);
+                    final KWTSelectableLabel sgfLabel = new KWTSelectableLabel(sgfList[i]);
                     final File sgfFile = sgfFiles[i];
                     sgfLabel.setFocusable(true);
                     sgfLabel.setEnabled(true);
+                    sgfLabel.setUnderlineStyle(KWTSelectableLabel.STYLE_DASHED);
                     sgfLabel.addActionListener(new ActionListener() {
                         
                         public void actionPerformed(ActionEvent arg0) {
