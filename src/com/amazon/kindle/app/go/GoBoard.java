@@ -15,6 +15,7 @@ public class GoBoard {
     private int[][] board;
     private int[][][] markup;
     private String comment;
+    private int[] lastMove;
 
     public static final int OFF_BOARD = -1;
     public static final int BLANK = 0;
@@ -49,6 +50,10 @@ public class GoBoard {
     public String getComment() {
         return (comment == null) ? "" : comment;
     }
+    
+    public int[] getLastMove() {
+        return lastMove;
+    }
 
     public int getPoint(int x, int y) {
         if (x >= size || x < 0 || y >= size || y < 0)
@@ -76,6 +81,8 @@ public class GoBoard {
 
     public void applyNode(SGFNode node) {
         node.setPreviousComment(comment);
+        node.setPreviousMove(lastMove);
+        
         comment = null;
         Set capturedStones = null;
         int[] point = null;
@@ -87,7 +94,8 @@ public class GoBoard {
             if (property.getIdent().equals("B") || property.getIdent().equals("W")) {
                 point = convertSGFToCoordinates(property.getValues()[0]);
                 
-                this.setPoint(property.getIdent().equals("B") ? BLACK : WHITE, point[0], point[1]);
+                setPoint(property.getIdent().equals("B") ? BLACK : WHITE, point[0], point[1]);
+                lastMove = point;
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
                         if ((dx+dy != 1) && (dx+dy != -1)) continue;
@@ -114,6 +122,8 @@ public class GoBoard {
     
     public void rewindNode(SGFNode node) {
         comment = node.getPreviousComment();
+        lastMove = node.getPreviousMove();
+        
         List properties = node.getProperties();
         Iterator it = properties.iterator();
         while (it.hasNext()) {

@@ -11,6 +11,7 @@ public class SGFNode {
     
     private Set captures;
     private String previousComment;
+    private int[] previousMove;
 
     void addProperty(SGFProperty property) {
         properties.add(property);
@@ -60,6 +61,14 @@ public class SGFNode {
         return previousComment;
     }
 
+    public void setPreviousMove(int[] point) {
+        previousMove = point;
+    }
+    
+    public int[] getPreviousMove() {
+        return previousMove;
+    }
+    
     public String toString() {
         String result = ";";
         Iterator i = properties.iterator();
