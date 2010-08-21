@@ -4,6 +4,17 @@ import java.util.List;
 
 public class SGFProperty {
 
+    public static final String PLAYER_WHITE = "PW";
+    public static final String PLAYER_BLACK = "PB";
+    public static final String RANK_WHITE = "WR";
+    public static final String RANK_BLACK = "BR";
+    public static final String DATE = "DT";
+    public static final String EVENT = "EV";
+    public static final String PLACE = "PC";
+    public static final String COMMENT = "C";
+    public static final String WHITE_MOVE = "W";
+    public static final String BLACK_MOVE = "B";
+    
     String propIdent;
     String propValue;
     List propValues;

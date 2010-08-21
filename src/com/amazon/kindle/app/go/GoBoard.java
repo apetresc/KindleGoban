@@ -33,6 +33,10 @@ public class GoBoard {
     private String playerBlack;
     private String whiteRank;
     private String blackRank;
+    
+    private String date;
+    private String event;
+    private String place;
 
     public GoBoard(int size) {
         this.size = size;
@@ -97,15 +101,15 @@ public class GoBoard {
         Iterator it = properties.iterator();
         while (it.hasNext()) {
             SGFProperty property = (SGFProperty) it.next();
-            if (property.getIdent().equals("B") || property.getIdent().equals("W")) {
+            if (property.getIdent().equals(SGFProperty.WHITE_MOVE) || property.getIdent().equals(SGFProperty.BLACK_MOVE)) {
                 point = convertSGFToCoordinates(property.getValues()[0]);
                 
-                setPoint(property.getIdent().equals("B") ? BLACK : WHITE, point[0], point[1]);
+                setPoint(property.getIdent().equals(SGFProperty.BLACK_MOVE) ? BLACK : WHITE, point[0], point[1]);
                 lastMove = point;
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
                         if ((dx+dy != 1) && (dx+dy != -1)) continue;
-                        if (getPoint(point[0]+dx, point[1]+dy) == (property.getIdent().equals("B") ? WHITE : BLACK)) {
+                        if (getPoint(point[0]+dx, point[1]+dy) == (property.getIdent().equals(SGFProperty.BLACK_MOVE) ? WHITE : BLACK)) {
                             Set group = floodFill(point[0]+dx, point[1]+dy);
                             if (!hasLiberties(group)) {
                                 if (capturedStones == null) capturedStones = new HashSet();
@@ -120,16 +124,22 @@ public class GoBoard {
                         }
                     }
                 }
-            } else if (property.getIdent().equals("C")) {
+            } else if (property.getIdent().equals(SGFProperty.COMMENT)) {
                 comment = property.getValues()[0];
-            } else if (property.getIdent().equals("PW")) {
+            } else if (property.getIdent().equals(SGFProperty.PLAYER_WHITE)) {
                 playerWhite = property.getValues()[0];
-            } else if (property.getIdent().equals("PB")) {
+            } else if (property.getIdent().equals(SGFProperty.PLAYER_BLACK)) {
                 playerBlack = property.getValues()[0];
-            } else if (property.getIdent().equals("WR")) {
+            } else if (property.getIdent().equals(SGFProperty.RANK_WHITE)) {
                 whiteRank = property.getValues()[0];
-            } else if (property.getIdent().equals("BR")) {
+            } else if (property.getIdent().equals(SGFProperty.RANK_BLACK)) {
                 blackRank = property.getValues()[0];
+            } else if (property.getIdent().equals(SGFProperty.DATE)) {
+                date = property.getValues()[0];
+            } else if (property.getIdent().equals(SGFProperty.EVENT)) {
+                event = property.getValues()[0];
+            } else if (property.getIdent().equals(SGFProperty.PLACE)) {
+                place = property.getValues()[0];
             }
         }
     }
@@ -215,5 +225,17 @@ public class GoBoard {
 
     public String getBlackRank() {
         return blackRank;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getEvent() {
+        return event;
+    }
+
+    public String getPlace() {
+        return place;
     }
 }
