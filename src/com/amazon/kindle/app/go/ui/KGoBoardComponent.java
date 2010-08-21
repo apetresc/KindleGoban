@@ -136,11 +136,13 @@ public class KGoBoardComponent extends KComponent {
             g.setColor((board.getPoint(lastMove[0], lastMove[1]) == GoBoard.BLACK) ? Color.WHITE : Color.BLACK);
             g.fillOval(X_OFFSET + lastMove[0] * SQUARE_SIZE - STONE_SIZE/4,
                     Y_OFFSET + lastMove[1] * SQUARE_SIZE - STONE_SIZE/4,
-                    STONE_SIZE/2 + 1, STONE_SIZE/2 + 1);
+                    STONE_SIZE/2 + 1,
+                    STONE_SIZE/2 + 1);
             g.setColor((board.getPoint(lastMove[0], lastMove[1]) == GoBoard.BLACK) ? Color.BLACK : Color.WHITE);
             g.fillOval(X_OFFSET + lastMove[0] * SQUARE_SIZE - STONE_SIZE/4 + BORDER_WIDTH/2,
                     Y_OFFSET + lastMove[1] * SQUARE_SIZE - STONE_SIZE/4 + BORDER_WIDTH/2,
-                    STONE_SIZE/2 - BORDER_WIDTH, STONE_SIZE/2 - BORDER_WIDTH);
+                    STONE_SIZE/2 - BORDER_WIDTH,
+                    STONE_SIZE/2 - BORDER_WIDTH);
         }
     }
     

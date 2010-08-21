@@ -27,6 +27,12 @@ public class GoBoard {
     public static final int CIRCLE   = MARKUP + 1;
     public static final int TRIANGLE = MARKUP + 2;
     public static final int SQUARE   = MARKUP + 3;
+    
+    // METADATA
+    private String playerWhite;
+    private String playerBlack;
+    private String whiteRank;
+    private String blackRank;
 
     public GoBoard(int size) {
         this.size = size;
@@ -116,6 +122,14 @@ public class GoBoard {
                 }
             } else if (property.getIdent().equals("C")) {
                 comment = property.getValues()[0];
+            } else if (property.getIdent().equals("PW")) {
+                playerWhite = property.getValues()[0];
+            } else if (property.getIdent().equals("PB")) {
+                playerBlack = property.getValues()[0];
+            } else if (property.getIdent().equals("WR")) {
+                whiteRank = property.getValues()[0];
+            } else if (property.getIdent().equals("BR")) {
+                blackRank = property.getValues()[0];
             }
         }
     }
@@ -185,5 +199,21 @@ public class GoBoard {
             }
         }
         return false;
+    }
+
+    public String getPlayerWhite() {
+        return playerWhite;
+    }
+    
+    public String getPlayerBlack() {
+        return playerBlack;
+    }
+
+    public String getWhiteRank() {
+        return whiteRank;
+    }
+
+    public String getBlackRank() {
+        return blackRank;
     }
 }

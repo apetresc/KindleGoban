@@ -1,6 +1,7 @@
 package com.amazon.kindle.app.go;
 
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -42,6 +43,7 @@ public class Main extends AbstractKindlet {
     private static final String SGF_DIR = "/sgf/";
 
     private Container root;
+    private KLabel titleLabel;
     private KGoBoardComponent boardComponent;
     private KLabelMultiline commentComponent;
 
@@ -90,19 +92,25 @@ public class Main extends AbstractKindlet {
         board = new GoBoard(19);
         board.init();
         
-        boardComponent = new KGoBoardComponent(board);
-        boardComponent.setFocusable(true);
         GridBagConstraints gc = new GridBagConstraints();
+        
+        titleLabel = new KLabel();
+        titleLabel.setFont(new Font(null, Font.BOLD, 25));
         gc.gridx = 0;
         gc.gridy = 0;
-        gc.insets = new Insets(0, GLOBAL_X_OFFSET, 0, 0);
         gc.weighty = 0.0;
         gc.anchor = GridBagConstraints.NORTH;
+        mainPanel.add(titleLabel, gc);
+        
+        boardComponent = new KGoBoardComponent(board);
+        boardComponent.setFocusable(true);
+        gc.gridy = 1;
+        gc.insets = new Insets(0, GLOBAL_X_OFFSET, 0, 0);
         mainPanel.add(boardComponent, gc);
         
         commentComponent = new KCommentArea(board.getSize() * SQUARE_SIZE + STONE_SIZE, 200);
         commentComponent.setFocusable(false);
-        gc.gridy = 1;
+        gc.gridy = 2;
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         gc.insets = new Insets(0, GLOBAL_X_OFFSET + STONE_SIZE/2, GLOBAL_Y_OFFSET, GLOBAL_X_OFFSET + STONE_SIZE/2);
@@ -156,13 +164,14 @@ public class Main extends AbstractKindlet {
                             boardComponent = new KGoBoardComponent(board);
                             GridBagConstraints gc = new GridBagConstraints();
                             gc.gridx = 0;
-                            gc.gridy = 0;
-                            gc.insets = new Insets(0, 0, 0, 0);
+                            gc.gridy = 1;
+                            gc.insets = new Insets(0, GLOBAL_X_OFFSET, 0, 0);
                             gc.weighty = 0.0;
                             gc.anchor = GridBagConstraints.NORTH;
                             mainPanel.add(boardComponent, gc);
                             
                             commentComponent.setText(board.getComment());
+                            refreshTitle();
                             
                             root.remove(sgfListPanel);
                             root.add(mainPanel);
@@ -202,8 +211,20 @@ public class Main extends AbstractKindlet {
             controller = new GoBoardController(board);
             controller.loadSGF(new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(SGF_DIR + "sgf24.sgf"))));
             controller.nextMove();
+            refreshTitle();
         } catch (IncorrectFormatException e) {
             e.printStackTrace();
+        }
+    }
+    
+    private void refreshTitle() {
+        if (board.getPlayerWhite() != null && board.getPlayerBlack() != null) {
+            if (board.getWhiteRank() != null && board.getBlackRank() != null) {
+                titleLabel.setText(board.getPlayerWhite() + " (" + board.getWhiteRank() + ")" +
+                        " vs. " + board.getPlayerBlack() + " (" + board.getBlackRank() + ")");
+            } else {
+                titleLabel.setText(board.getPlayerWhite() + " vs. " + board.getPlayerBlack());
+            }
         }
     }
     
