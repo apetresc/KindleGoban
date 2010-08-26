@@ -22,12 +22,14 @@ import org.kwt.ui.KWTSelectableLabel;
 import com.amazon.kindle.kindlet.AbstractKindlet;
 import com.amazon.kindle.kindlet.KindletContext;
 import com.amazon.kindle.kindlet.event.KindleKeyCodes;
-import com.amazon.kindle.kindlet.ui.KButton;
+import com.amazon.kindle.kindlet.ui.KBoxLayout;
 import com.amazon.kindle.kindlet.ui.KLabel;
 import com.amazon.kindle.kindlet.ui.KLabelMultiline;
 import com.amazon.kindle.kindlet.ui.KMenu;
 import com.amazon.kindle.kindlet.ui.KMenuItem;
+import com.amazon.kindle.kindlet.ui.KPages;
 import com.amazon.kindle.kindlet.ui.KPanel;
+import com.amazon.kindle.kindlet.ui.pages.PageProviders;
 
 import com.amazon.kindle.app.go.model.sgf.IncorrectFormatException;
 import com.amazon.kindle.app.go.model.sgf.SGFFilenameFilter;
@@ -143,7 +145,6 @@ public class Main extends AbstractKindlet {
         chooseSgfMenuItem.addActionListener(new ActionListener() {
             
             public void actionPerformed(ActionEvent arg0) {
-                KButton okButton = new KButton("OK");
                 File sgfDir = new File(context.getHomeDirectory(), "sgf");
                 if (!sgfDir.exists()) {
                     sgfDir.mkdir();
@@ -156,11 +157,11 @@ public class Main extends AbstractKindlet {
                 }
 
                 final KPanel sgfListPanel = new KPanel(new GridBagLayout());
-                GridBagConstraints gc = new GridBagConstraints();
-                gc.gridx = 0;
-                gc.insets = new Insets(10, 10, 10, 10);
-                gc.weighty = 0.0;
-                gc.anchor = GridBagConstraints.WEST;
+                final KPages sgfListPages = new KPages(PageProviders.createKBoxLayoutProvider(KBoxLayout.Y_AXIS));
+                
+                sgfListPages.setFocusable(true);
+                sgfListPages.setEnabled(true);
+                sgfListPages.setPageKeyPolicy(KPages.PAGE_KEYS_GLOBAL);
                 
                 for (int i = 0; i < sgfList.length; i++) {
                     final KWTSelectableLabel sgfLabel = new KWTSelectableLabel(sgfList[i]);
@@ -170,17 +171,18 @@ public class Main extends AbstractKindlet {
                     sgfLabel.setUnderlineStyle(KWTSelectableLabel.STYLE_DASHED);
                     sgfLabel.addActionListener(new ActionListener() {
                         
-                        public void actionPerformed(ActionEvent arg0) {
+                        public void actionPerformed(ActionEvent e) {
+                            sgfListPages.setPageKeyPolicy(KPages.PAGE_KEYS_DISABLED);
                             board = new GoBoard(19);
                             board.init();
                             controller = new GoBoardController(board);
                             try {
                                 controller.loadSGF(new BufferedReader(new FileReader(sgfFile)));
                                 controller.nextMove();
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            } catch (IncorrectFormatException e) {
-                                e.printStackTrace();
+                            } catch (FileNotFoundException fnf) {
+                                fnf.printStackTrace();
+                            } catch (IncorrectFormatException ife) {
+                                ife.printStackTrace();
                             }
                             mainPanel.remove(boardComponent);
                             boardComponent = new KGoBoardComponent(board);
@@ -204,26 +206,24 @@ public class Main extends AbstractKindlet {
                             root.repaint();
                         }
                     });
-                    gc.gridy = i;
-                    sgfListPanel.add(sgfLabel, gc);
-                    
+                    sgfListPages.addItem(sgfLabel);
                 }
                 
-                okButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        root.remove(sgfListPanel);
-                        root.add(mainPanel);
-                        boardHasFocus = true;
-                        root.repaint();
-                    }
-                });
-                gc.gridy = gc.gridy + 1;
-                sgfListPanel.add(okButton, gc);
-                
                 boardHasFocus = false;
+                GridBagConstraints gc = new GridBagConstraints();
+                gc.gridx = 0;
+                gc.gridy = 0;
+                gc.insets = new Insets(20, 20, 20, 20);
+                gc.anchor = GridBagConstraints.NORTH;
+                gc.weightx = 1.0;
+                gc.weighty = 1.0;
+                gc.fill = GridBagConstraints.BOTH;
+                sgfListPanel.add(sgfListPages, gc);
+                
                 root.remove(mainPanel);
                 root.add(sgfListPanel);
-                okButton.requestFocus();
+                sgfListPages.first();
+                sgfListPages.requestFocus();
             }
         });
         menu.add(chooseSgfMenuItem);
