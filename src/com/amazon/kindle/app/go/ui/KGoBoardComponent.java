@@ -10,6 +10,7 @@ import com.amazon.kindle.kindlet.ui.KComponent;
 public class KGoBoardComponent extends KComponent {
     private static final long serialVersionUID = -411749555428258146L;
 
+    //TODO: Make these style-able.
     private static final int SQUARE_SIZE = 40;
     private static final int STONE_SIZE  = SQUARE_SIZE;
     private static final int STAR_SIZE = STONE_SIZE/5;

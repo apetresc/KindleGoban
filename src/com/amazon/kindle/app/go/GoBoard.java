@@ -89,19 +89,21 @@ public class GoBoard {
         return this.size;
     }
 
-    public void applyNode(SGFNode node) {
+    public boolean applyNode(SGFNode node) {
         node.setPreviousComment(comment);
         node.setPreviousMove(lastMove);
         
         comment = null;
         Set capturedStones = null;
         int[] point = null;
+        boolean containsMove = false;
         
         List properties = node.getProperties();
         Iterator it = properties.iterator();
         while (it.hasNext()) {
             SGFProperty property = (SGFProperty) it.next();
             if (property.getIdent().equals(SGFProperty.WHITE_MOVE) || property.getIdent().equals(SGFProperty.BLACK_MOVE)) {
+                containsMove = true;
                 point = convertSGFToCoordinates(property.getValues()[0]);
                 
                 setPoint(property.getIdent().equals(SGFProperty.BLACK_MOVE) ? BLACK : WHITE, point[0], point[1]);
@@ -142,9 +144,13 @@ public class GoBoard {
                 place = property.getValues()[0];
             }
         }
+        
+        return containsMove;
     }
     
-    public void rewindNode(SGFNode node) {
+    public boolean rewindNode(SGFNode node) {
+        boolean containsMove = false;
+        
         comment = node.getPreviousComment();
         lastMove = node.getPreviousMove();
         
@@ -152,7 +158,8 @@ public class GoBoard {
         Iterator it = properties.iterator();
         while (it.hasNext()) {
             SGFProperty property = (SGFProperty) it.next();
-            if (property.getIdent().equals("B") || property.getIdent().equals("W")) {
+            if (property.getIdent().equals(SGFProperty.WHITE_MOVE) || property.getIdent().equals(SGFProperty.BLACK_MOVE)) {
+                containsMove = true;
                 int[] point = convertSGFToCoordinates(property.getValues()[0]);
                 
                 this.setPoint(BLANK, point[0], point[1]);
@@ -166,6 +173,7 @@ public class GoBoard {
                 }
             }
         }
+        return containsMove;
     }
 
     private Set floodFill(int x, int y) {

@@ -29,8 +29,7 @@ public class GoBoardController {
         if (sgfIterator == null || !sgfIterator.hasNext()) {
             return false;
         }
-        board.applyNode(sgfIterator.next());
-        currentMoveNumber++;
+        if (board.applyNode(sgfIterator.next())) currentMoveNumber++;;
         return true;
     }
     
@@ -38,14 +37,25 @@ public class GoBoardController {
         if (sgfIterator == null || !sgfIterator.hasPrevious()) {
             return false;
         }
-        board.rewindNode(sgfIterator.previous());
-        currentMoveNumber--;
+        if (board.rewindNode(sgfIterator.previous())) currentMoveNumber--;
         return true;
     }
     
     public boolean goToMove(int move) {
         while (currentMoveNumber < move && nextMove()) { }
+        while (currentMoveNumber > move && previousMove()) { }
         return currentMoveNumber == move;
     }
     
+    public int getCurrentMoveNumber() {
+        return currentMoveNumber;
+    }
+    
+    public int getMainBranchLength() {
+        int currentMove = currentMoveNumber;
+        while (nextMove());
+        int lastMove = currentMoveNumber;
+        goToMove(currentMove);
+        return lastMove;
+    }
 }

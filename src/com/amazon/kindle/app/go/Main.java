@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 
+import org.kwt.ui.KWTProgressBar;
 import org.kwt.ui.KWTSelectableLabel;
 
 import com.amazon.kindle.kindlet.AbstractKindlet;
@@ -46,6 +47,7 @@ public class Main extends AbstractKindlet {
     private KLabel titleLabel;
     private KLabel descriptionLabel;
     private KGoBoardComponent boardComponent;
+    private KWTProgressBar progressBar;
     private KLabelMultiline commentComponent;
 
     private GoBoard board;
@@ -63,18 +65,24 @@ public class Main extends AbstractKindlet {
                 if (controller != null) {
                     e.consume();
                     controller.nextMove();
+                    progressBar.incrementTick();
                     commentComponent.setText(board.getComment());
-                    commentComponent.repaint();
+                    
+                    progressBar.repaint();
                     boardComponent.repaint();
+                    commentComponent.repaint();
                 }
                 return true;
             case KindleKeyCodes.VK_FIVE_WAY_LEFT:
-                if (controller != null) {
+                if (controller != null && controller.getCurrentMoveNumber() > 0) {
                     e.consume();
                     controller.previousMove();
+                    progressBar.decrementTick();
                     commentComponent.setText(board.getComment());
-                    commentComponent.repaint();
+
+                    progressBar.repaint();
                     boardComponent.repaint();
+                    commentComponent.repaint();
                 }
                 return true;
             default:
@@ -121,6 +129,14 @@ public class Main extends AbstractKindlet {
         gc.fill = GridBagConstraints.BOTH;
         gc.insets = new Insets(0, GLOBAL_X_OFFSET + STONE_SIZE/2, GLOBAL_Y_OFFSET, GLOBAL_X_OFFSET + STONE_SIZE/2);
         mainPanel.add(commentComponent, gc);
+        
+        progressBar = new KWTProgressBar();
+        progressBar.setLabelStyle(KWTProgressBar.STYLE_NONE);
+        gc.gridy = 4;
+        gc.insets = new Insets(0, GLOBAL_X_OFFSET + STONE_SIZE/2, 20, GLOBAL_X_OFFSET + STONE_SIZE/2);
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.SOUTH;
+        mainPanel.add(progressBar, gc);
         
         final KMenu menu = new KMenu();
         final KMenuItem chooseSgfMenuItem = new KMenuItem("Choose SGF...");
@@ -176,6 +192,9 @@ public class Main extends AbstractKindlet {
                             gc.anchor = GridBagConstraints.NORTH;
                             mainPanel.add(boardComponent, gc);
                             
+                            progressBar.setCurrentTick(0);
+                            progressBar.setTotalTicks(controller.getMainBranchLength());
+                            
                             commentComponent.setText(board.getComment());
                             refreshTitleAndDescription();
                             
@@ -190,7 +209,6 @@ public class Main extends AbstractKindlet {
                     
                 }
                 
-
                 okButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         root.remove(sgfListPanel);
@@ -217,6 +235,8 @@ public class Main extends AbstractKindlet {
             controller = new GoBoardController(board);
             controller.loadSGF(new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(SGF_DIR + "sgf24.sgf"))));
             controller.nextMove();
+            
+            progressBar.setTotalTicks(controller.getMainBranchLength());
             refreshTitleAndDescription();
         } catch (IncorrectFormatException e) {
             e.printStackTrace();
