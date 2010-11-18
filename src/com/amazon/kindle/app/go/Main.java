@@ -216,6 +216,13 @@ public class Main extends AbstractKindlet {
                 gc.insets = new Insets(20, 20, 20, 20);
                 gc.anchor = GridBagConstraints.NORTH;
                 gc.weightx = 1.0;
+                gc.weighty = 0.0;
+                gc.fill = GridBagConstraints.HORIZONTAL;
+                sgfListPanel.add(new KLabelMultiline("Please select an SGF file from the ones below.\n" +
+                        "To add more SGFs to KindleGoban, drop them into the sgf/ directory in this application's " +
+                        "folder on your Kindle device."));
+                
+                gc.gridy = 1;
                 gc.weighty = 1.0;
                 gc.fill = GridBagConstraints.BOTH;
                 sgfListPanel.add(sgfListPages, gc);
