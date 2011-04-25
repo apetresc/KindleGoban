@@ -69,7 +69,7 @@ public class Main extends AbstractKindlet {
                     controller.nextMove();
                     progressBar.incrementTick();
                     commentComponent.setText(board.getComment());
-                    
+
                     progressBar.repaint();
                     boardComponent.repaint();
                     commentComponent.repaint();

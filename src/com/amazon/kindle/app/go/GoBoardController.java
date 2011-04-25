@@ -29,7 +29,7 @@ public class GoBoardController {
         if (sgfIterator == null || !sgfIterator.hasNext()) {
             return false;
         }
-        if (board.applyNode(sgfIterator.next())) currentMoveNumber++;;
+        if (board.applyNode(sgfIterator.next())) currentMoveNumber++;
         return true;
     }
     

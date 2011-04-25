@@ -21,7 +21,6 @@ public class KGoBoardComponent extends KComponent {
     private GoBoard board;
     
     public KGoBoardComponent(GoBoard board) {
-        super();
         this.board = board;
     }
     
